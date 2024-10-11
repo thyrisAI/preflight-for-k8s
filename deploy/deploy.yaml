@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: thyris-preflight
+  namespace: thyris-system
+spec:
+  containers:
+  - name: preflight-for-k8s
+    image: preflight-for-k8s:latest
+    imagePullPolicy: IfNotPresent
