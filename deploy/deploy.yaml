@@ -1,10 +1,54 @@
 apiVersion: v1
-kind: Pod
+kind: ServiceAccount
 metadata:
-  name: thyris-preflight
-  namespace: thyris-system
+  name: preflight-for-k8s-sa
+  namespace: thyris-system  # Replace with your namespace
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: preflight-for-k8s-role
+rules:
+- apiGroups: ["storage.k8s.io"]
+  resources: ["storageclasses", "volumesnapshotclasses"]
+  verbs: ["get", "list"]
+- apiGroups: [""]
+  resources: ["nodes"]
+  verbs: ["get", "list"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: preflight-for-k8s-binding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: preflight-for-k8s-role
+subjects:
+- kind: ServiceAccount
+  name: preflight-for-k8s-sa
+  namespace: thyris-system  # Replace with your namespace
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: preflight-for-k8s-deployment
+  namespace: thyris-system  # Replace with your namespace
 spec:
-  containers:
-  - name: preflight-for-k8s
-    image: preflight-for-k8s:latest
-    imagePullPolicy: IfNotPresent
+  replicas: 1
+  selector:
+    matchLabels:
+      app: preflight-for-k8s
+  template:
+    metadata:
+      labels:
+        app: preflight-for-k8s
+    spec:
+      serviceAccountName: preflight-for-k8s-sa  # Use the ServiceAccount with correct permissions
+      containers:
+      - name: preflight-for-k8s-container
+        image: thyris/preflight-for-k8s:latest  # Replace with your actual image tag
+        imagePullPolicy: IfNotPresent
