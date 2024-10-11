@@ -13,7 +13,7 @@ Before running the preflight script, ensure the following requirements are met:
 ### Apply deploy.yaml
 
 ```bash
-kubectl apply -f https://raw.githubusercontent.com/thyrisAI/preflight-for-k8s/refs/heads/main/deploy/deploy.yaml
+kubectl apply -f https://raw.githubusercontent.com/thyrisAI/preflight-for-k8s/main/deploy/deploy.yaml
 ```
 
 ### Longhorn Installation (Optional)
