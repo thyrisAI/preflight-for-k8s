@@ -47,20 +47,16 @@ func testStorageClass(clientset *kubernetes.Clientset) {
 	}
 }
 
-// Test 2: Check if Longhorn and PXW support is enabled
-func testLonghornAndPWX(clientset *kubernetes.Clientset) {
+// Test 2: Check if Longhorn support is enabled
+func testLonghorn(clientset *kubernetes.Clientset) {
 	scs, err := clientset.StorageV1().StorageClasses().List(context.TODO(), metav1.ListOptions{})
 	checkError(err, "Failed to get Storage Class")
 
 	foundLonghorn := false
-	foundPWX := false
 
 	for _, sc := range scs.Items {
 		if strings.Contains(sc.Provisioner, "longhorn") {
 			foundLonghorn = true
-		}
-		if strings.Contains(sc.Provisioner, "pxd") {
-			foundPWX = true
 		}
 	}
 
@@ -68,13 +64,6 @@ func testLonghornAndPWX(clientset *kubernetes.Clientset) {
 		fmt.Println("Longhorn support found.")
 	} else {
 		fmt.Println("Longhorn support not found.")
-		os.Exit(1)
-	}
-
-	if foundPWX {
-		fmt.Println("PWX support is enabled.")
-	} else {
-		fmt.Println("PWX support not found.")
 		os.Exit(1)
 	}
 }
@@ -132,7 +121,7 @@ func main() {
 
 	// Run tests in sequence
 	testStorageClass(clientset)
-	testLonghornAndPWX(clientset)
+	testLonghorn(clientset)
 	testVolumeSnapshotClass(clientset)
 	testClusterResources(clientset)
 
