@@ -1,4 +1,10 @@
 apiVersion: v1
+kind: Namespace
+metadata:
+  name: thyris-system
+
+---
+apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: preflight-for-k8s-sa
